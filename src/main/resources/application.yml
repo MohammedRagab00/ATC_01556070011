@@ -1,3 +1,57 @@
 spring:
   application:
-    name: EpicGather
+    name: In-Prod
+  datasource:
+    url: ${POSTGRES_URL}
+    username: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+    driver-class-name: org.postgresql.Driver
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  profiles:
+    active: dev
+  servlet:
+    multipart:
+      max-file-size: 2MB
+  flyway:
+    enabled: true
+    user: ${POSTGRES_USER}
+    password: ${POSTGRES_PASSWORD}
+  mail:
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    host: smtp.gmail.com
+    port: 587
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+          ssl:
+            trust: smtp.gmail.com
+            protocols: TLSv1.2 TLSv1.3
+        timeout: 3000
+        connectiontimeout: 5000
+        writetimeout: 5000
+application:
+  security:
+    jwt:
+      secret-key: ${SECRET_KEY}
+      expiration: ${EXPIRATION}
+      refresh-token:
+        expiration-days: ${EXPIRATION_DAYS}
+  mailing:
+    frontend:
+      url: http://localhost:4200
+springdoc:
+  default-produces-media-type: application/json
+server:
+  servlet:
+    context-path: /api/v1/
+azure:
+  storage:
+    connection-string: ${AZURE_CONNECTION_STRING}
+    container-name: ${AZURE_CONTAINER_NAME}
