@@ -1,7 +1,7 @@
 package com.ragab.booking.api.admin.controller;
 
-import com.ragab.booking.api.user.dto.UserSearchResponse;
-import com.ragab.booking.api.user.service.AdminService;
+import com.ragab.booking.api.admin.dto.UserSearchResponse;
+import com.ragab.booking.api.admin.service.AdminService;
 import com.ragab.booking.common.response.PageResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

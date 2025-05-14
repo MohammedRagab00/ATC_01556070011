@@ -35,6 +35,7 @@ public enum BusinessErrorCode {
     VALIDATION_ERROR(4001, BAD_REQUEST, "Validation failed"),
     INVALID_ARGUMENT(4002, BAD_REQUEST, "Invalid argument provided"),
     DUPLICATE_RESOURCE(4003, CONFLICT, "Resource already exists"),
+    ENTITY_NOT_FOUND(4004, NOT_FOUND, "Entity not found"),
     INTERNAL_ERROR(5001, INTERNAL_SERVER_ERROR, "Internal server error"),
 
     // Management

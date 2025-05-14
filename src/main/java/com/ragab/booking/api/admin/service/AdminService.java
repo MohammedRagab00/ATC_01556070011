@@ -1,6 +1,6 @@
-package com.ragab.booking.api.user.service;
+package com.ragab.booking.api.admin.service;
 
-import com.ragab.booking.api.user.dto.UserSearchResponse;
+import com.ragab.booking.api.admin.dto.UserSearchResponse;
 import com.ragab.booking.common.response.PageResponse;
 import com.ragab.booking.core.user.mapper.UserMapper;
 import com.ragab.booking.core.user.model.Users;

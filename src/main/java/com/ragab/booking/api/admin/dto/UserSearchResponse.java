@@ -1,4 +1,4 @@
-package com.ragab.booking.api.user.dto;
+package com.ragab.booking.api.admin.dto;
 
 public record UserSearchResponse(
         Integer id,

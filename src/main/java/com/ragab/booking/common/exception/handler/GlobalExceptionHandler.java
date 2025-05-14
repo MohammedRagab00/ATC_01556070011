@@ -5,6 +5,7 @@ import com.ragab.booking.common.exception.custom.user.InvalidAgeException;
 import com.ragab.booking.common.exception.custom.user.InvalidGenderException;
 import com.ragab.booking.common.exception.custom.user.InvalidPasswordException;
 import jakarta.mail.MessagingException;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.http.fileupload.FileUploadException;
 import org.springframework.context.MessageSourceResolvable;
@@ -107,6 +108,17 @@ public class GlobalExceptionHandler {
                 "Validation failed for submitted data",
                 validationErrors,
                 fieldErrors
+        );
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<ExceptionResponse> handleEntityNotFoundException(EntityNotFoundException ex) {
+        log.warn("Entity not found: {}", ex.getMessage());
+        return buildErrorResponse(
+                ENTITY_NOT_FOUND,
+                ex.getMessage(),
+                null,
+                Map.of("entity", "Requested entity not found")
         );
     }
 

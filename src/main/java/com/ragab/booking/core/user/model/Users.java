@@ -2,10 +2,8 @@ package com.ragab.booking.core.user.model;
 
 import com.ragab.booking.common.exception.custom.user.InvalidAgeException;
 import com.ragab.booking.common.model.BaseEntity;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.PreUpdate;
+import com.ragab.booking.core.booking.model.Booking;
+import jakarta.persistence.*;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,6 +13,8 @@ import lombok.experimental.SuperBuilder;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.temporal.ChronoUnit;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -40,6 +40,9 @@ public class Users extends BaseEntity {
 
     private boolean isAdmin;
     private boolean enabled;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Booking> bookings = new HashSet<>();
 
     public String getName() {
         return firstname + " " + lastname;

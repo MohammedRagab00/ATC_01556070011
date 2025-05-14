@@ -1,7 +1,7 @@
 package com.ragab.booking.core.user.mapper;
 
 import com.ragab.booking.api.user.dto.UserProfileResponse;
-import com.ragab.booking.api.user.dto.UserSearchResponse;
+import com.ragab.booking.api.admin.dto.UserSearchResponse;
 import com.ragab.booking.core.user.model.Users;
 import com.ragab.booking.infrastructure.azure.ProfilePhotoService;
 import lombok.RequiredArgsConstructor;
