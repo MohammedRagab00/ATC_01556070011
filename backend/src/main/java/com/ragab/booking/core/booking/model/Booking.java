@@ -14,6 +14,7 @@ import org.hibernate.annotations.OnDelete;
 import java.time.LocalDateTime;
 
 import static org.hibernate.annotations.OnDeleteAction.CASCADE;
+import static org.hibernate.annotations.OnDeleteAction.SET_NULL;
 
 @Getter
 @Setter
@@ -30,8 +31,8 @@ public class Booking extends AuditableEntity {
     private Users user;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "event_id", nullable = false)
-    @OnDelete(action = CASCADE)
+    @JoinColumn(name = "event_id")
+    @OnDelete(action = SET_NULL)
     private Event event;
 
     @Column(name = "booked_at", nullable = false, updatable = false)

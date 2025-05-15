@@ -1,6 +1,6 @@
 package com.ragab.booking.core.event.mapper;
 
-import com.ragab.booking.api.admin.dto.event.EventRequest;
+import com.ragab.booking.api.event.dto.EventRequest;
 import com.ragab.booking.api.event.dto.EventResponse;
 import com.ragab.booking.core.event.model.Event;
 import com.ragab.booking.core.tag.model.Tag;
@@ -10,15 +10,17 @@ import java.util.stream.Collectors;
 
 @Component
 public class EventMapper {
-    public EventResponse toResponse(Event event) {
+    public EventResponse toResponse(Event event, String imageUrl) {
         return new EventResponse(
+                event.getId(),
                 event.getName(),
                 event.getDescription(),
                 event.getEventDate(),
                 event.getPrice(),
                 event.getVenue(),
                 event.getCategory() != null ? event.getCategory().getName() : null,
-                event.getTags().stream().map(Tag::getName).collect(Collectors.toSet())
+                event.getTags().stream().map(Tag::getName).collect(Collectors.toSet()),
+                imageUrl
         );
     }
 

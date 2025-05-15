@@ -1,7 +1,7 @@
 package com.ragab.booking;
 
-import com.ragab.booking.core.category.model.Category;
-import com.ragab.booking.core.category.repository.CategoryRepository;
+import com.ragab.booking.core.tag.model.Tag;
+import com.ragab.booking.core.tag.repository.TagRepository;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -22,12 +22,17 @@ public class EpicGatherApplication {
 
 //    @Bean
     public CommandLineRunner commandLineRunner(
-            CategoryRepository categoryRepository
+//            CategoryRepository categoryRepository,
     ) {
         return args -> {
-            if (!categoryRepository.existsByNameIgnoreCase("Sports")) {
-                categoryRepository.save(new Category("Sports"));
+/*
+            if (!tagRepository.existsByNameIgnoreCase("WOW")) {
+                tagRepository.save(Tag.builder()
+                        .name("WOW")
+                        .build()
+                );
             }
+*/
         };
     }
 }

@@ -39,7 +39,11 @@ public enum BusinessErrorCode {
     INTERNAL_ERROR(5001, INTERNAL_SERVER_ERROR, "Internal server error"),
 
     // Management
-    UNAUTHORIZED_ACCESS(6003, FORBIDDEN, "Unauthorized shop access"),
+    UNAUTHORIZED_ACCESS(6003, FORBIDDEN, "Unauthorized access"),
+
+    // Booking Management
+    BOOKING_ALREADY_EXISTS(7001, CONFLICT, "The selected slot is already booked"),
+    EVENT_ALREADY_PASSED(7002, BAD_REQUEST, "Action not allowed on a past event"),
     ;
 
     private final int code;

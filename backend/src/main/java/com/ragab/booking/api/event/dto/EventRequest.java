@@ -1,4 +1,4 @@
-package com.ragab.booking.api.admin.dto.event;
+package com.ragab.booking.api.event.dto;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.NotBlank;

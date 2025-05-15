@@ -100,6 +100,6 @@ public class UserController {
             @AuthenticationPrincipal UserPrincipal principal
     ) {
         userService.deletePhoto(principal.getUsername());
-        return ResponseEntity.ok().build();
+        return ResponseEntity.noContent().build();
     }
 }

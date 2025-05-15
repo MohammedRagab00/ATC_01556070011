@@ -22,11 +22,4 @@ import java.util.Set;
 public class Tag extends AuditableEntity {
     @Column(length = 50, nullable = false, unique = true)
     String name;
-
-    @ManyToMany
-    @JoinTable(name = "event_tags",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "event_id")
-    )
-    private Set<Event> events = new HashSet<>();
 }

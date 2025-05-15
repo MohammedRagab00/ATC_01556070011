@@ -39,7 +39,7 @@ public class Event extends AuditableEntity {
     @Column(nullable = false)
     private String venue;
 
-    @OneToMany(mappedBy = "event", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "event", cascade = CascadeType.MERGE)
     private Set<Booking> bookings = new HashSet<>();
 
     @ManyToOne(cascade = CascadeType.PERSIST)

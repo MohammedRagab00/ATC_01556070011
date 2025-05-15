@@ -1,6 +1,8 @@
 package com.ragab.booking.common.exception.handler;
 
 import com.ragab.booking.common.exception.custom.*;
+import com.ragab.booking.common.exception.custom.booking.AlreadyBookedException;
+import com.ragab.booking.common.exception.custom.booking.EventPassedException;
 import com.ragab.booking.common.exception.custom.user.InvalidAgeException;
 import com.ragab.booking.common.exception.custom.user.InvalidGenderException;
 import com.ragab.booking.common.exception.custom.user.InvalidPasswordException;
@@ -260,13 +262,33 @@ public class GlobalExceptionHandler {
 
 
     @ExceptionHandler(UnAuthorizedException.class)
-    public ResponseEntity<ExceptionResponse> handleUnauthorizedShopAccessException(UnAuthorizedException ex) {
-        log.warn("Unauthorized access to shop: {}", ex.getMessage());
+    public ResponseEntity<ExceptionResponse> handleUnauthorizedException(UnAuthorizedException ex) {
         return buildErrorResponse(
                 UNAUTHORIZED_ACCESS,
                 ex.getMessage(),
                 null,
-                Map.of("shop", "You don't have permission to modify this shop")
+                Map.of("UnAuthorized", "You don't have permission to access this resource")
+        );
+    }
+
+    @ExceptionHandler(AlreadyBookedException.class)
+    public ResponseEntity<ExceptionResponse> handleAlreadyBookedException(AlreadyBookedException ex) {
+        log.warn("Booking already exists: {}", ex.getMessage());
+        return buildErrorResponse(
+                BOOKING_ALREADY_EXISTS,
+                ex.getMessage(),
+                null,
+                Map.of("booking", "The selected slot is already booked")
+        );
+    }
+
+    @ExceptionHandler(EventPassedException.class)
+    public ResponseEntity<ExceptionResponse> handleEventPassedException(EventPassedException ex) {
+        return buildErrorResponse(
+                EVENT_ALREADY_PASSED,
+                ex.getMessage(),
+                null,
+                Map.of("event", "Cannot book or cancel a past event")
         );
     }
 

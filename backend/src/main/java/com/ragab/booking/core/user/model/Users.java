@@ -41,9 +41,6 @@ public class Users extends BaseEntity {
     private boolean isAdmin;
     private boolean enabled;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<Booking> bookings = new HashSet<>();
-
     public String getName() {
         return firstname + " " + lastname;
     }
