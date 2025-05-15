@@ -18,6 +18,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
 
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Tag(name = "Admin Events", description = "Endpoints for event administration, including creation, updates, and tagging")
 @RestController
@@ -72,7 +74,7 @@ public class AdminEventController {
             @ApiResponse(responseCode = "400", description = "Invalid file type or size"),
             @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
-    @PutMapping("/{eventId}/photo")
+    @PutMapping(value = "/{eventId}/photo", consumes = MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<Void> updatePhoto(
             @PathVariable Integer eventId,
             @RequestParam("file") MultipartFile file

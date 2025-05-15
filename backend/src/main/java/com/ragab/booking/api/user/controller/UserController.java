@@ -19,6 +19,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
+
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
 @RequestMapping("/user")
@@ -79,7 +81,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid file type or size"),
             @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
-    @PutMapping("/photo")
+    @PutMapping(value = "/photo", consumes = MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> updatePhoto(
             @RequestParam("file") MultipartFile file,
