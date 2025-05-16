@@ -21,47 +21,46 @@ jobs:
       - name: Set up Java version
         uses: actions/setup-java@v4
         with:
-          java-version: "17"
-          distribution: "microsoft"
+          java-version: '17'
+          distribution: 'microsoft'
 
-      - name: Build with Maven (Skip tests)
-        run: |
-          cd backend
-          mvn clean install -DskipTests=true
+      - name: Build with Maven
+        run: mvn clean install
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
         with:
           name: java-app
-          path: "${{ github.workspace }}/backend/target/*.jar"
+          path: '${{ github.workspace }}/target/*.jar'
 
   deploy:
     runs-on: ubuntu-latest
     needs: build
     environment:
-      name: "Production"
+      name: 'Production'
       url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
-
+  
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
-
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_2DE8B2DBAF8545BD989B686AEA666432 }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_A8E4CBA454FA458289D289FD44214EED }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D98866324B374D90B2B8B7775BCB1EE8 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_D602C44A8D054B8185C0A36DDE4FBE37 }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2829DE15510B487DB5672D20C6BE05ED }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_A2E842BE30054AF896EFB6CC0EA35415 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
         uses: azure/webapps-deploy@v3
         with:
-          app-name: "epic-gather"
-          slot-name: "Production"
-          package: "*.jar"
+          app-name: 'epic-gather'
+          slot-name: 'Production'
+          package: '*.jar'
+          
