@@ -1,6 +1,7 @@
 package com.ragab.booking.api.event.service;
 
 import com.ragab.booking.api.event.dto.EventRequest;
+import com.ragab.booking.core.booking.repository.BookingRepository;
 import com.ragab.booking.core.category.model.Category;
 import com.ragab.booking.core.category.repository.CategoryRepository;
 import com.ragab.booking.core.event.mapper.EventMapper;
@@ -24,6 +25,7 @@ public class AdminEventService {
     private final EventMapper eventMapper;
     private final TagRepository tagRepository;
     private final EventImageService eventImageService;
+    private final BookingRepository bookingRepository;
 
 
     @Transactional
@@ -61,6 +63,14 @@ public class AdminEventService {
 
     public void updatePhoto(Integer eventId, MultipartFile file) {
         eventImageService.updateEventImage(eventId, file);
+    }
+
+    public boolean hasEventPassed(Integer eventId) {
+        return !getEventById(eventId).isUpcoming();
+    }
+
+    public int getBookingCount(Integer eventId) {
+        return bookingRepository.countByEvent_Id(eventId);
     }
 
     @Transactional

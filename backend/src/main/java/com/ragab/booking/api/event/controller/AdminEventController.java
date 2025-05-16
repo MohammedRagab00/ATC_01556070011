@@ -17,6 +17,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.springframework.http.MediaType.MULTIPART_FORM_DATA_VALUE;
 
@@ -82,6 +84,33 @@ public class AdminEventController {
         adminEventService.updatePhoto(eventId, file);
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(summary = "Check if an event can be deleted", description = "Verifies if an event has passed or if there are active bookings")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "Event check completed"),
+            @ApiResponse(responseCode = "404", description = "Event not found")
+    })
+    @GetMapping("/{eventId}/can-delete")
+    public ResponseEntity<Map<String, Object>> checkEventDeletion(
+            @PathVariable Integer eventId
+    ) {
+        boolean hasPassed = adminEventService.hasEventPassed(eventId);
+
+        Map<String, Object> response = new HashMap<>();
+        if (hasPassed) {
+            response.put("status", "safe to delete");
+        } else {
+            int bookingCount = adminEventService.getBookingCount(eventId);
+            if (bookingCount > 0) {
+                response.put("status", "cannot delete");
+                response.put("bookings", bookingCount);
+            } else {
+                response.put("status", "safe to delete none has booked");
+            }
+        }
+        return ResponseEntity.ok(response);
+    }
+
 
     @Operation(summary = "Delete an event", description = "Removes an event from the system")
     @ApiResponses({

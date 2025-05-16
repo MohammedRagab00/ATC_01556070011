@@ -11,7 +11,7 @@ public class BookingMapper {
                 booking.getId(),
                 booking.getEvent().getName(),
                 booking.getEvent().getEventDate(),
-                booking.getBookingDate()
+                booking.getCreatedDate()
         );
     }
 }
