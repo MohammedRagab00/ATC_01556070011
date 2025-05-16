@@ -165,7 +165,7 @@ public class AuthenticatorController {
             @ApiResponse(responseCode = "200", description = "Password reset successful"),
             @ApiResponse(responseCode = "400", description = "Invalid or expired token")
     })
-    @PatchMapping("/reset-password")
+    @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(
             @RequestParam("token") String token,
             @RequestBody @Valid ResetPasswordRequest request
