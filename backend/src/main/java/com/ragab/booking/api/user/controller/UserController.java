@@ -36,7 +36,7 @@ public class UserController {
             @ApiResponse(responseCode = "400", description = "Invalid current password or password mismatch"),
             @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
-    @PatchMapping("/password")
+    @PostMapping("/password")
     @PreAuthorize("isAuthenticated()")
     public ResponseEntity<Void> changePassword(
             @RequestBody @Valid ChangePasswordRequest request,
