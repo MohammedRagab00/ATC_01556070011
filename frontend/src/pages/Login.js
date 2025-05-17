@@ -173,9 +173,6 @@ const Login = () => {
     if (!email) {
       newErrors.email = "Email is required";
       isValid = false;
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
-      newErrors.email = "Please enter a valid email address";
-      isValid = false;
     }
 
     if (!password) {
