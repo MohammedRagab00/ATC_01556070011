@@ -1,6 +1,6 @@
 package com.ragab.booking.core.booking.mapper;
 
-import com.ragab.booking.api.event.dto.BookedResponse;
+import com.ragab.booking.api.booking.dto.BookedResponse;
 import com.ragab.booking.core.booking.model.Booking;
 import org.springframework.stereotype.Component;
 

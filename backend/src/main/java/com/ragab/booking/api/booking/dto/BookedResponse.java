@@ -1,4 +1,4 @@
-package com.ragab.booking.api.event.dto;
+package com.ragab.booking.api.booking.dto;
 
 import java.time.LocalDateTime;
 
