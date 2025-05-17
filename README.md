@@ -31,3 +31,11 @@ Built using **React** for the frontend and **Spring Boot** for the backend, this
 The project is deployed at:
 - **Frontend:** [Vercel Deployment](https://atc-01556070011.vercel.app)
 - **Backend:** Hosted on Azure [Azure Deployment](https://epic-gather-dua2cncsh4g5gxg8.uaenorth-01.azurewebsites.net/api/v1/swagger-ui/index.html#/)
+
+### Admin Access
+To access the **Admin Panel**, use the following credentials:
+
+📧 **Admin Email:** admin@admin
+🔒 **Admin Password:** m0000000
+
+📧 **For credentials, contact:** [mohammed_ragab@outlook.com](mailto:mohammed_ragab@outlook.com)
