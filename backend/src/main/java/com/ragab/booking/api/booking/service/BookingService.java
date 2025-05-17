@@ -37,6 +37,7 @@ public class BookingService {
         Page<Booking> bookings = bookingRepository.findAllByUser_Id(userId, pageable);
 
         List<BookedResponse> bookedResponses = bookings.stream()
+                .filter(booking -> booking.getEvent() != null)
                 .map(bookingMapper::toResponse)
                 .toList();
         return new PageResponse<>(
