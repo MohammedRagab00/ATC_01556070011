@@ -16,8 +16,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static com.ragab.booking.core.event.specification.EventSpecification.inFuture;
-
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @Service
 public class EventService {
@@ -29,7 +27,7 @@ public class EventService {
     @Transactional(readOnly = true)
     public PageResponse<EventResponse> getEvents(int page, int size) {
         Pageable pageable = Pageable.ofSize(size).withPage(page);
-        Page<Event> events = eventRepository.findAll(inFuture(), pageable);
+        Page<Event> events = eventRepository.findAll(pageable);
 
         List<EventResponse> eventResponse = events.stream()
                 .map(event ->
