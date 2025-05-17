@@ -13,6 +13,7 @@ public record EventResponse(
         String venue,
         String category,
         Set<String> tags,
-        String imageUrl
+        String imageUrl,
+        boolean isUpcoming
 ) {
 }

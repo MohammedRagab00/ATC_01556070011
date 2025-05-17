@@ -20,7 +20,8 @@ public class EventMapper {
                 event.getVenue(),
                 event.getCategory() != null ? event.getCategory().getName() : null,
                 event.getTags().stream().map(Tag::getName).collect(Collectors.toSet()),
-                imageUrl
+                imageUrl,
+                event.isUpcoming()
         );
     }
 

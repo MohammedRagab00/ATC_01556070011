@@ -11,7 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
-@Tag(name = "Events", description = "Endpoints for managing events and bookings")
+@Tag(name = "Events", description = "Endpoints for retrieving events")
 @RestController
 @RequestMapping("/event")
 public class EventController {

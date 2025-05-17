@@ -8,6 +8,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +20,11 @@ import java.net.URI;
 
 @RequiredArgsConstructor(onConstructor_ = @Autowired)
 @RestController
+@Tag(name = "Bookings", description = "Endpoints for managing bookings")
 @RequestMapping("/bookings")
 @PreAuthorize("hasRole('USER')")
 @SecurityRequirement(name = "Bearer Authentication")
-public class BookController {
+public class BookingController {
     private final BookingService bookingService;
 
     @Operation(summary = "Get booked events for a user", description = "Fetches a paginated list of booked events")
