@@ -1,7 +1,6 @@
 package com.ragab.booking.api.booking.service;
 
 import com.ragab.booking.api.booking.dto.BookedResponse;
-import com.ragab.booking.api.event.dto.EventResponse;
 import com.ragab.booking.common.exception.custom.UnAuthorizedException;
 import com.ragab.booking.common.exception.custom.booking.AlreadyBookedException;
 import com.ragab.booking.common.exception.custom.booking.EventPassedException;
@@ -9,12 +8,10 @@ import com.ragab.booking.common.response.PageResponse;
 import com.ragab.booking.core.booking.mapper.BookingMapper;
 import com.ragab.booking.core.booking.model.Booking;
 import com.ragab.booking.core.booking.repository.BookingRepository;
-import com.ragab.booking.core.event.mapper.EventMapper;
 import com.ragab.booking.core.event.model.Event;
 import com.ragab.booking.core.event.repository.EventRepository;
 import com.ragab.booking.core.user.model.Users;
 import com.ragab.booking.core.user.repository.UserRepository;
-import com.ragab.booking.infrastructure.azure.EventImageService;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +29,6 @@ public class BookingService {
     private final BookingRepository bookingRepository;
     private final BookingMapper bookingMapper;
     private final UserRepository userRepository;
-    private final EventImageService eventImageService;
-    private final EventMapper eventMapper;
     private final EventRepository eventRepository;
 
     @Transactional(readOnly = true)
@@ -55,25 +50,12 @@ public class BookingService {
         );
     }
 
-    @Transactional(readOnly = true)
-    public EventResponse getBookedEvent(Integer userId, Integer bookingId) {
-        Users user = findUserById(userId);
-        Booking booking = bookingRepository.findById(bookingId)
-                .orElseThrow(() -> new EntityNotFoundException("Booking not found"));
-        if (!booking.getUser().getId().equals(user.getId())) {
-            throw new UnAuthorizedException("You are not authorized to view this booking");
-        }
-        Event event = booking.getEvent();
-        return eventMapper.toResponse(event, eventImageService.getImageUrl(event.getImageUrl()));
-    }
-
     public Integer bookEvent(Integer userId, Integer eventId) {
         Users user = findUserById(userId);
 
-        Event event = eventRepository.findById(eventId).orElse(null);
-        if (event == null) {
-            throw new EntityNotFoundException("Event not found");
-        } else if (!event.isUpcoming()) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EntityNotFoundException("Event not found"));
+        if (!event.isUpcoming()) {
             throw new EventPassedException("Event passed: cannot book");
         }
         Booking booking = bookingRepository.findByUser_IdAndEvent_Id(userId, eventId);

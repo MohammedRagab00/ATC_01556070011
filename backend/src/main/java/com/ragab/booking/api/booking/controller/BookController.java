@@ -2,7 +2,6 @@ package com.ragab.booking.api.booking.controller;
 
 import com.ragab.booking.api.booking.dto.BookedResponse;
 import com.ragab.booking.api.booking.service.BookingService;
-import com.ragab.booking.api.event.dto.EventResponse;
 import com.ragab.booking.common.response.PageResponse;
 import com.ragab.booking.config.security.userdetails.UserPrincipal;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,16 +36,6 @@ public class BookController {
         return ResponseEntity.ok(bookingService.getBookings(userId, page, size));
     }
 
-    @Operation(summary = "Get booked event details for a user", description = "Fetches the booked event details")
-    @GetMapping("/{bookingId}")
-    public ResponseEntity<EventResponse> getBookedEvent(
-            @PathVariable Integer bookingId,
-            @AuthenticationPrincipal UserPrincipal userPrincipal
-    ) {
-        Integer userId = userPrincipal.user().getId();
-        return ResponseEntity.ok(bookingService.getBookedEvent(userId, bookingId));
-    }
-
     @Operation(summary = "Book an event", description = "Allows users to book an event")
     @ApiResponses({
             @ApiResponse(responseCode = "201", description = "Event booked successfully"),
@@ -54,7 +43,7 @@ public class BookController {
             @ApiResponse(responseCode = "401", description = "User not authenticated")
     })
     @PostMapping("/{eventId}/book")
-    public ResponseEntity<?> bookEvent(
+    public ResponseEntity<Void> bookEvent(
             @PathVariable Integer eventId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
@@ -73,7 +62,7 @@ public class BookController {
     @DeleteMapping("/{bookingId}")
     @PreAuthorize("hasRole('USER')")
     @SecurityRequirement(name = "Bearer Authentication")
-    public ResponseEntity<?> cancelBooking(
+    public ResponseEntity<Void> cancelBooking(
             @PathVariable Integer bookingId,
             @AuthenticationPrincipal UserPrincipal userPrincipal
     ) {
