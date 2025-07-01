@@ -11,8 +11,6 @@ import Login from "./pages/Login";
 import SignUp from "./pages/SignUp";
 import EventDetails from "./pages/EventDetails";
 import Navbar from "./components/Navbar";
-import { ThemeProvider } from "styled-components";
-import theme from "./config/theme";
 import ActivateAccount from "./pages/ActivateAccount";
 import ProtectedRoute from "./components/ProtectedRoute";
 import EventList from "./components/admin/EventList";
@@ -25,7 +23,7 @@ import Bookings from "./pages/Bookings";
 import AdminNav from "./components/admin/AdminNav";
 import { SidebarProvider } from "./context/SidebarContext";
 import { ThemeProvider as CustomThemeProvider } from "./context/ThemeContext";
-import styled, { createGlobalStyle } from 'styled-components';
+import  { createGlobalStyle } from 'styled-components';
 import Congratulations from './components/Congratulations';
 
 const GlobalStyle = createGlobalStyle`

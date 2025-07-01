@@ -248,6 +248,11 @@ const EventList = () => {
   const [newTag, setNewTag] = useState('');
   const [form] = Form.useForm();
   const [editingEvent, setEditingEvent] = useState(null);
+  const [pagination, setPagination] = useState({
+    current: 0,
+    pageSize: 10,
+    total: 0,
+  });
   const { collapsed } = useSidebar();
   const theme = useTheme();
 
@@ -255,13 +260,23 @@ const EventList = () => {
     fetchEvents();
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (page = 0, pageSize = 10) => {
     try {
       setLoading(true);
       const response = await axios.get(`${API_BASE_URL}/event`, {
-        headers: getAuthHeader()
+        params: {
+          page: page,
+          size: pageSize,
+        },
+        headers: getAuthHeader(),
       });
-      setEvents(response.data.content || []);
+      const { content, totalElements, page: currentPage, size } = response.data;
+      setEvents(content || []);
+      setPagination({
+        current: currentPage,
+        pageSize: size,
+        total: totalElements,
+      });
     } catch (error) {
       message.error('Failed to fetch events');
     } finally {
@@ -558,11 +573,15 @@ const EventList = () => {
             rowKey="id"
             scroll={{ x: true }}
             pagination={{
-              responsive: true,
+              current: pagination.current + 1,
+              pageSize: pagination.pageSize,
+              total: pagination.total,
               showSizeChanger: true,
-              showTotal: (total) => `Total ${total} items`,
               pageSizeOptions: ['10', '20', '50'],
-              defaultPageSize: 10,
+              showTotal: (total) => `Total ${total} items`,
+              onChange: (page, pageSize) => {
+                fetchEvents(page - 1, pageSize);
+              },
             }}
           />
 
