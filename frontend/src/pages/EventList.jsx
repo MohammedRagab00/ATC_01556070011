@@ -1,7 +1,7 @@
 import { useState, useEffect } from "react";
 import styled from "styled-components";
 import { useSidebar } from "../context/SidebarContext";
-import { Layout } from "antd";
+import { Layout, Pagination } from "antd";
 
 const Container = styled.div`
   padding: 32px 24px;
@@ -16,26 +16,41 @@ const EventList = () => {
   const { collapsed } = useSidebar();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
+  // Add pagination state
+  const [pagination, setPagination] = useState({
+    current: 0,
+    pageSize: 9,
+    total: 0,
+  });
 
   useEffect(() => {
     fetchEvents();
   }, []);
 
-  const fetchEvents = async () => {
+  const fetchEvents = async (page = pagination.current) => {
     try {
       setLoading(true);
       const response = await fetch(
-        "https://epic-gather-dua2cncsh4g5gxg8.uaenorth-01.azurewebsites.net/api/v1/event"
+        `https://epic-gather-dua2cncsh4g5gxg8.uaenorth-01.azurewebsites.net/api/v1/event?page=${page}&size=${pagination.pageSize}`
       );
 
       if (!response.ok) throw new Error("Failed to fetch events");
       const data = await response.json();
       setEvents(data.content || []);
+      setPagination((prev) => ({
+        ...prev,
+        current: page,
+        total: data.totalElements,
+      }));
     } catch (error) {
       console.error("Error fetching events:", error);
     } finally {
       setLoading(false);
     }
+  };
+
+  const handlePageChange = (page) => {
+    fetchEvents(page - 1); // API uses 0-based indexing
   };
 
   return (
@@ -87,6 +102,21 @@ const EventList = () => {
               ))}
             </div>
           )}
+        </div>
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            marginTop: "24px",
+          }}
+        >
+          <Pagination
+            current={pagination.current + 1}
+            pageSize={pagination.pageSize}
+            total={pagination.total}
+            onChange={handlePageChange}
+            showSizeChanger={false}
+          />
         </div>
       </Container>
     </Layout>

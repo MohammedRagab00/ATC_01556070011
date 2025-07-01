@@ -19,6 +19,7 @@ import { EditOutlined, DeleteOutlined, PlusOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import { useSidebar } from "../../context/SidebarContext";
 import EventForm from "../../components/admin/EventForm"; // Adjust the import based on your project structure
+import axios from "axios";
 
 const { Column } = Table;
 
@@ -133,7 +134,7 @@ const TableContainer = styled.div`
 
   @media (max-width: 480px) {
     border-radius: 8px;
-    
+
     .ant-table-thead > tr > th,
     .ant-table-tbody > tr > td {
       padding: 6px;
@@ -152,34 +153,56 @@ const TableContainer = styled.div`
   }
 `;
 
+const API_BASE_URL =
+  "https://epic-gather-dua2cncsh4g5gxg8.uaenorth-01.azurewebsites.net/api/v1";
+
 const EventManagement = () => {
   const { collapsed } = useSidebar();
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
   const [currentEvent, setCurrentEvent] = useState(null);
+  const [pagination, setPagination] = useState({
+    current: 0,
+    pageSize: 10,
+    total: 0,
+  });
 
   // Fetch events on load
   useEffect(() => {
     fetchEvents();
   }, []);
 
-  const fetchEvents = async () => {
+  const getAuthHeader = () => {
+    const user = JSON.parse(localStorage.getItem("user"));
+    return user?.token ? { Authorization: `Bearer ${user.token}` } : {};
+  };
+
+  const fetchEvents = async (page = 0, pageSize = 10) => {
     try {
       setLoading(true);
-      const response = await fetch(
-        "https://epic-gather-dua2cncsh4g5gxg8.uaenorth-01.azurewebsites.net/api/v1/event"
-      );
+      console.log("Fetching events with:", { page, pageSize });
 
-      if (!response.ok) {
-        throw new Error("Failed to fetch events");
-      }
+      const response = await axios.get(`${API_BASE_URL}/event`, {
+        params: {
+          page: page,
+          size: pageSize,
+        },
+        headers: getAuthHeader(),
+      });
 
-      const data = await response.json();
-      // Events already include tags in their response
-      setEvents(data.content || []);
+      console.log("Response:", response.data);
+
+      const { content, totalElements, page: currentPage, size } = response.data;
+      setEvents(content || []);
+      setPagination({
+        current: currentPage,
+        pageSize: size,
+        total: totalElements,
+      });
     } catch (error) {
       console.error("Error fetching events:", error);
+      message.error("Failed to fetch events");
     } finally {
       setLoading(false);
     }
@@ -260,7 +283,7 @@ const EventManagement = () => {
   };
 
   return (
-    <Layout style={{ minHeight: "100vh", position: 'relative' }}>
+    <Layout style={{ minHeight: "100vh", position: "relative" }}>
       <Container $collapsed={collapsed}>
         <PageHeader>
           <PageTitle>Event Management</PageTitle>
@@ -279,11 +302,11 @@ const EventManagement = () => {
 
         <TableContainer>
           {loading ? (
-            <div style={{ padding: '24px', textAlign: 'center' }}>
+            <div style={{ padding: "24px", textAlign: "center" }}>
               <p>Loading events...</p>
             </div>
           ) : events.length === 0 ? (
-            <div style={{ padding: '24px', textAlign: 'center' }}>
+            <div style={{ padding: "24px", textAlign: "center" }}>
               <p>No events found. Create your first event!</p>
             </div>
           ) : (
@@ -294,19 +317,25 @@ const EventManagement = () => {
               scroll={{ x: true }}
               size="small"
               pagination={{
-                responsive: true,
+                current: pagination.current + 1,
+                pageSize: pagination.pageSize,
+                total: pagination.total,
                 showSizeChanger: true,
-                showTotal: (total) => `Total ${total} items`,
-                pageSizeOptions: ['10', '20', '50'],
-                defaultPageSize: 10,
-                size: 'small',
+                pageSizeOptions: ["10", "20", "50"],
+                showTotal: (total) => `Total ${total} events`,
+                onChange: (page, pageSize) => {
+                  console.log("Page change:", { page, pageSize });
+                  fetchEvents(page - 1, pageSize);
+                },
               }}
             >
               <Column
                 title="Name"
                 dataIndex="name"
                 key="name"
-                render={(text) => <span style={{ fontWeight: 500 }}>{text}</span>}
+                render={(text) => (
+                  <span style={{ fontWeight: 500 }}>{text}</span>
+                )}
               />
               <Column
                 title="Date"
@@ -314,11 +343,7 @@ const EventManagement = () => {
                 key="eventDate"
                 render={(date) => new Date(date).toLocaleDateString()}
               />
-              <Column
-                title="Venue"
-                dataIndex="venue"
-                key="venue"
-              />
+              <Column title="Venue" dataIndex="venue" key="venue" />
               <Column
                 title="Price"
                 dataIndex="price"
@@ -329,11 +354,7 @@ const EventManagement = () => {
                 title="Category"
                 dataIndex="category"
                 key="category"
-                render={(category) => (
-                  <Tag color="blue">
-                    {category}
-                  </Tag>
-                )}
+                render={(category) => <Tag color="blue">{category}</Tag>}
               />
               <Column
                 title="Actions"

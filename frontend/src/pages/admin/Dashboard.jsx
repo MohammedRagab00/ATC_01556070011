@@ -1,22 +1,33 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Card, Row, Col, Statistic, Layout, ConfigProvider, Tabs, Tag } from 'antd';
-import { CalendarOutlined, ClockCircleOutlined } from '@ant-design/icons';
-import axios from 'axios';
-import styled, { useTheme } from 'styled-components';
-import { message } from 'antd';
-import { useSidebar } from '../../context/SidebarContext';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Card,
+  Row,
+  Col,
+  Statistic,
+  Layout,
+  ConfigProvider,
+  Tabs,
+  Tag,
+  Pagination,
+} from "antd";
+import { CalendarOutlined, ClockCircleOutlined } from "@ant-design/icons";
+import axios from "axios";
+import styled, { useTheme } from "styled-components";
+import { message } from "antd";
+import { useSidebar } from "../../context/SidebarContext";
 
 const { Content } = Layout;
-const API_BASE_URL = 'https://epic-gather-dua2cncsh4g5gxg8.uaenorth-01.azurewebsites.net/api/v1';
+const API_BASE_URL =
+  "https://epic-gather-dua2cncsh4g5gxg8.uaenorth-01.azurewebsites.net/api/v1";
 
 const ResponsiveContent = styled(Content)`
-  margin-left: ${({ $collapsed }) => ($collapsed ? '80px' : '250px')};
+  margin-left: ${({ $collapsed }) => ($collapsed ? "80px" : "250px")};
   padding: 32px 24px;
   background: ${({ theme }) => theme.admin.background};
   min-height: 100vh;
   transition: all 0.2s ease;
-  width: calc(100% - ${({ $collapsed }) => ($collapsed ? '80px' : '250px')});
+  width: calc(100% - ${({ $collapsed }) => ($collapsed ? "80px" : "250px")});
 
   @media (max-width: 768px) {
     margin-left: 0;
@@ -56,13 +67,13 @@ const StyledCard = styled(Card)`
   background: ${({ theme }) => theme.admin.cardBackground};
   border: 1px solid ${({ theme }) => theme.primary}20;
   height: 100%;
-  
+
   .ant-statistic-title {
     color: ${({ theme }) => theme.admin.textLight};
     font-size: 15px;
     font-weight: 500;
   }
-  
+
   .ant-statistic-content {
     color: ${({ theme }) => theme.admin.text};
     font-size: 28px;
@@ -79,7 +90,7 @@ const StyledCard = styled(Card)`
     .ant-statistic-title {
       font-size: 14px;
     }
-    
+
     .ant-statistic-content {
       font-size: 20px;
     }
@@ -98,31 +109,31 @@ const EventCard = styled(Card)`
   background: ${({ theme }) => theme.admin.cardBackground};
   border: 1px solid ${({ theme }) => theme.primary}20;
   transition: all 0.3s ease;
-  
+
   .ant-card-head {
     border-bottom: 1px solid ${({ theme }) => theme.admin.border};
     padding: 12px 16px;
   }
-  
+
   .ant-card-head-title {
     color: ${({ theme }) => theme.admin.text};
     font-weight: 600;
   }
-  
+
   .ant-card-body {
     padding: 16px;
   }
-  
+
   .event-date {
     color: ${({ theme }) => theme.primary};
     margin-bottom: 8px;
   }
-  
+
   .event-venue {
     color: ${({ theme }) => theme.admin.textLight};
     margin-bottom: 8px;
   }
-  
+
   .event-price {
     color: ${({ theme }) => theme.accent};
     font-weight: 600;
@@ -132,31 +143,33 @@ const EventCard = styled(Card)`
     .ant-card-head-title {
       font-size: 16px;
     }
-    
-    .event-date, .event-venue {
+
+    .event-date,
+    .event-venue {
       font-size: 14px;
     }
   }
 
   @media (max-width: 480px) {
     margin-bottom: 12px;
-    
+
     .ant-card-head {
       padding: 8px 12px;
     }
-    
+
     .ant-card-body {
       padding: 12px;
     }
-    
+
     .ant-card-head-title {
       font-size: 14px;
     }
-    
-    .event-date, .event-venue {
+
+    .event-date,
+    .event-venue {
       font-size: 13px;
     }
-    
+
     .event-price {
       font-size: 14px;
     }
@@ -172,92 +185,125 @@ const Dashboard = () => {
   const [stats, setStats] = useState({
     totalEvents: 0,
     upcomingEvents: 0,
-    pastEvents: 0
+    pastEvents: 0,
   });
   const [events, setEvents] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [activeTab, setActiveTab] = useState('dashboard');
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [pagination, setPagination] = useState({
+    current: 0,
+    pageSize: 10,
+    total: 0,
+  });
   const navigate = useNavigate();
   const theme = useTheme();
   const { collapsed } = useSidebar();
 
   const getAuthHeader = () => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     return token ? { Authorization: `Bearer ${token}` } : {};
   };
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        setLoading(true);
-        const response = await axios.get(`${API_BASE_URL}/event`, {
-          headers: getAuthHeader()
-        });
-        const events = response.data.content || [];
-        
-        const upcomingEvents = events.filter(event => event.isUpcoming);
-        const pastEvents = events.filter(event => !event.isUpcoming);
-        
-        setEvents(events);
-        setStats({
-          totalEvents: events.length,
-          upcomingEvents: upcomingEvents.length,
-          pastEvents: pastEvents.length
-        });
-      } catch (error) {
-        message.error('Failed to fetch dashboard data');
-        if (error.response?.status === 401) {
-          navigate('/login');
-        }
-      } finally {
-        setLoading(false);
+  const fetchData = async (page = 0, pageSize = 10) => {
+    try {
+      setLoading(true);
+      const response = await axios.get(`${API_BASE_URL}/event`, {
+        params: {
+          page: page,
+          size: pageSize,
+        },
+        headers: getAuthHeader(),
+      });
+
+      const { content, totalElements, page: currentPage } = response.data;
+      setEvents(content || []);
+      setPagination({
+        current: currentPage,
+        pageSize: pageSize,
+        total: totalElements,
+      });
+
+      // Update stats based on returned data
+      const upcomingEvents = content.filter((event) => event.isUpcoming);
+      const pastEvents = content.filter((event) => !event.isUpcoming);
+
+      setStats({
+        totalEvents: totalElements,
+        upcomingEvents: upcomingEvents.length,
+        pastEvents: pastEvents.length,
+      });
+    } catch (error) {
+      message.error("Failed to fetch dashboard data");
+      if (error.response?.status === 401) {
+        navigate("/login");
       }
-    };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
-  }, [navigate]);
+  }, []);
 
   const formatDate = (dateString) => {
-    const options = { 
-      weekday: 'long', 
-      year: 'numeric', 
-      month: 'long', 
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
+    const options = {
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
     };
     return new Date(dateString).toLocaleDateString(undefined, options);
   };
 
   const tabItems = [
     {
-      key: 'upcoming',
-      label: 'Upcoming Events',
-      children: events
-        .filter(event => event.isUpcoming)
-        .map(event => (
-          <EventCard key={event.id} title={event.name}>
-            <div className="event-date">
-              <CalendarOutlined style={{ marginRight: 8 }} />
-              {formatDate(event.eventDate)}
-            </div>
-            <div className="event-venue">{event.venue}</div>
-            <div className="event-price">${event.price}</div>
-            <div className="event-tags" style={{ marginTop: '8px' }}>
-              {event.tags?.map(tag => (
-                <Tag key={tag} color="blue" style={{ marginRight: '4px' }}>
-                  {tag}
-                </Tag>
-              ))}
-            </div>
-          </EventCard>
-        ))
+      key: "upcoming",
+      label: "Upcoming Events",
+      children: (
+        <>
+          {/* Events list */}
+          {events
+            .filter((event) => event.isUpcoming)
+            .map((event) => (
+              <EventCard key={event.id} title={event.name}>
+                <div className="event-date">
+                  <CalendarOutlined style={{ marginRight: 8 }} />
+                  {formatDate(event.eventDate)}
+                </div>
+                <div className="event-venue">{event.venue}</div>
+                <div className="event-price">${event.price}</div>
+                <div className="event-tags" style={{ marginTop: "8px" }}>
+                  {event.tags?.map((tag) => (
+                    <Tag key={tag} color="blue" style={{ marginRight: "4px" }}>
+                      {tag}
+                    </Tag>
+                  ))}
+                </div>
+              </EventCard>
+            ))}
+          {/* Pagination */}
+          <div style={{ marginTop: "20px", textAlign: "center" }}>
+            <Pagination
+              current={pagination.current + 1}
+              pageSize={pagination.pageSize}
+              total={pagination.total}
+              onChange={(page, pageSize) => fetchData(page - 1, pageSize)}
+              showSizeChanger
+              showTotal={(total) => `Total ${total} items`}
+            />
+          </div>
+        </>
+      ),
     },
     {
-      key: 'past',
-      label: 'Past Events',
+      key: "past",
+      label: "Past Events",
       children: events
-        .filter(event => !event.isUpcoming)
-        .map(event => (
+        .filter((event) => !event.isUpcoming)
+        .map((event) => (
           <EventCard key={event.id} title={event.name}>
             <div className="event-date">
               <CalendarOutlined style={{ marginRight: 8 }} />
@@ -265,16 +311,16 @@ const Dashboard = () => {
             </div>
             <div className="event-venue">{event.venue}</div>
             <div className="event-price">${event.price}</div>
-            <div className="event-tags" style={{ marginTop: '8px' }}>
-              {event.tags?.map(tag => (
-                <Tag key={tag} color="blue" style={{ marginRight: '4px' }}>
+            <div className="event-tags" style={{ marginTop: "8px" }}>
+              {event.tags?.map((tag) => (
+                <Tag key={tag} color="blue" style={{ marginRight: "4px" }}>
                   {tag}
                 </Tag>
               ))}
             </div>
           </EventCard>
-        ))
-    }
+        )),
+    },
   ];
 
   return (
@@ -286,7 +332,13 @@ const Dashboard = () => {
         },
       }}
     >
-      <Layout style={{ minHeight: '100vh', background: theme.admin.background, position: 'relative' }}>
+      <Layout
+        style={{
+          minHeight: "100vh",
+          background: theme.admin.background,
+          position: "relative",
+        }}
+      >
         <ResponsiveContent $collapsed={collapsed}>
           <PageTitle>Admin Dashboard</PageTitle>
 
@@ -322,14 +374,11 @@ const Dashboard = () => {
             </Col>
           </Row>
 
-          <StyledCard 
-            title="Recent Events" 
-            style={{ marginTop: '24px' }}
-          >
-            <Tabs 
-              defaultActiveKey="upcoming" 
+          <StyledCard title="Recent Events" style={{ marginTop: "24px" }}>
+            <Tabs
+              defaultActiveKey="upcoming"
               items={tabItems}
-              style={{ overflowX: 'auto' }}
+              style={{ overflowX: "auto" }}
               size="small"
             />
           </StyledCard>
